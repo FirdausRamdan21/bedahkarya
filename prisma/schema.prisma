@@ -1,0 +1,352 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma-v3"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  USER
+  MODERATOR
+  ADMIN
+}
+
+enum ThemePreference {
+  LIGHT
+  DARK
+}
+
+enum ImageFormat {
+  PORTRAIT
+  LANDSCAPE
+  TEXT
+}
+
+enum PostStatus {
+  PUBLISHED
+  DRAFT
+}
+
+enum ReportStatus {
+  PENDING
+  RESOLVED
+  DISMISSED
+}
+
+enum NotificationCategory {
+  SYSTEM
+  ADMIN_ANNOUNCEMENT
+  WARNING
+  INTERACTION
+  HISTORY
+}
+
+enum AppealTargetType {
+  ACCOUNT
+  POST
+  COMMENT
+}
+
+enum AppealStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model User {
+  id                   String          @id @default(cuid())
+  username             String          @unique
+  name                 String
+  email                String          @unique
+  phone                String?
+  password             String
+  bio                  String?         @db.Text
+  avatarUrl            String?
+  role                 Role            @default(USER)
+  theme                ThemePreference @default(LIGHT)
+  hideLikeCountDefault Boolean         @default(false)
+  allowDmFromFollowing Boolean         @default(true)
+  emailNotifications   Boolean         @default(true)
+  isSuspended          Boolean         @default(false)
+  suspendedUntil       DateTime?
+  suspensionReason     String?         @db.Text
+  createdAt            DateTime        @default(now())
+
+  posts            Post[]
+  comments         Comment[]
+  likes            Like[]
+  bookmarks        Bookmark[]
+  reports          Report[]
+  moderationLogs   ModerationLog[]
+  searchHistories  SearchHistory[]
+  notifications    Notification[]
+  appeals          Appeal[]
+  sentMessages     DirectMessage[] @relation("dmSender")
+  receivedMessages DirectMessage[] @relation("dmReceiver")
+  issuedWarnings   PostWarning[]
+  userBadges       UserBadge[]
+
+  followers Follow[] @relation("following")
+  following Follow[] @relation("follower")
+}
+
+model Follow {
+  id          String   @id @default(cuid())
+  followerId  String
+  followingId String
+  createdAt   DateTime @default(now())
+
+  follower  User @relation("follower", fields: [followerId], references: [id], onDelete: Cascade)
+  following User @relation("following", fields: [followingId], references: [id], onDelete: Cascade)
+
+  @@unique([followerId, followingId])
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  key         String   @unique @db.VarChar(64)
+  label       String   @db.VarChar(80)
+  shortLabel  String   @db.VarChar(40)
+  description String   @db.Text
+  sortOrder   Int      @default(0)
+  createdById String?
+  createdAt   DateTime @default(now())
+
+  subcategories Subcategory[]
+}
+
+model Subcategory {
+  id         String   @id @default(cuid())
+  slug       String   @unique @db.VarChar(80)
+  name       String   @db.VarChar(80)
+  categoryId String
+  createdAt  DateTime @default(now())
+
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@index([categoryId])
+}
+
+model Badge {
+  id          String   @id @default(cuid())
+  slug        String   @unique @db.VarChar(64)
+  name        String   @db.VarChar(60)
+  description String   @db.VarChar(200)
+  icon        String   @default("award") @db.VarChar(32)
+  createdById String?
+  createdAt   DateTime @default(now())
+
+  assignments UserBadge[]
+}
+
+model UserBadge {
+  id           String   @id @default(cuid())
+  userId       String
+  badgeId      String
+  assignedById String?
+  note         String?  @db.VarChar(200)
+  createdAt    DateTime @default(now())
+
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  badge Badge @relation(fields: [badgeId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, badgeId])
+  @@index([userId])
+}
+
+model CommunityEvent {
+  id          String    @id @default(cuid())
+  slug        String    @unique @db.VarChar(80)
+  title       String    @db.VarChar(120)
+  description String    @db.Text
+  themeTag    String?   @db.VarChar(60)
+  isActive    Boolean   @default(true)
+  startDate   DateTime  @default(now())
+  endDate     DateTime?
+  createdById String?
+  createdAt   DateTime  @default(now())
+
+  posts Post[]
+}
+
+model Post {
+  id            String      @id @default(cuid())
+  title         String
+  caption       String      @db.Text
+  imageUrl      String?
+  imageFormat   ImageFormat @default(PORTRAIT)
+  tags          String
+  category      String      @default("KARYA") @db.VarChar(64)
+  subcategory   String?     @db.VarChar(80)
+  status        PostStatus  @default(PUBLISHED)
+  externalLink  String?     @db.Text
+  mentions      String?
+  hideLikeCount Boolean     @default(false)
+  warningCount  Int         @default(0)
+  hasViolation  Boolean     @default(false)
+  eventId       String?
+  publishedAt   DateTime    @default(now())
+  createdAt     DateTime    @default(now())
+
+  authorId String
+  author   User            @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  event    CommunityEvent? @relation(fields: [eventId], references: [id], onDelete: SetNull)
+
+  comments       Comment[]
+  likes          Like[]
+  bookmarks      Bookmark[]
+  reports        Report[]
+  moderationLogs ModerationLog[]
+  warnings       PostWarning[]
+  dmReferences   DirectMessage[]
+
+  @@index([status, category, publishedAt])
+  @@index([status, subcategory, publishedAt])
+  @@index([authorId, status])
+  @@index([eventId, status])
+}
+
+model PostWarning {
+  id         String   @id @default(cuid())
+  postId     String
+  issuedById String?
+  level      Int      @default(1)
+  reason     String   @db.Text
+  createdAt  DateTime @default(now())
+
+  post     Post  @relation(fields: [postId], references: [id], onDelete: Cascade)
+  issuedBy User? @relation(fields: [issuedById], references: [id], onDelete: SetNull)
+}
+
+model Comment {
+  id        String   @id @default(cuid())
+  content   String   @db.Text
+  isHelpful Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  postId String
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  postId    String
+  userId    String
+  createdAt DateTime @default(now())
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+}
+
+model Bookmark {
+  id        String   @id @default(cuid())
+  postId    String
+  userId    String
+  createdAt DateTime @default(now())
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([postId, userId])
+}
+
+model Report {
+  id          String       @id @default(cuid())
+  reason      String       @db.Text
+  evidenceUrl String?
+  status      ReportStatus @default(PENDING)
+  createdAt   DateTime     @default(now())
+
+  postId     String
+  post       Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
+  reporterId String
+  reporter   User   @relation(fields: [reporterId], references: [id], onDelete: Cascade)
+}
+
+model ModerationLog {
+  id           String   @id @default(cuid())
+  content      String   @db.Text
+  matchedWords String
+  postId       String?
+  userId       String?
+  createdAt    DateTime @default(now())
+
+  post Post? @relation(fields: [postId], references: [id], onDelete: SetNull)
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+}
+
+model Notification {
+  id        String               @id @default(cuid())
+  userId    String?
+  category  NotificationCategory
+  title     String
+  message   String               @db.Text
+  linkUrl   String?
+  isRead    Boolean              @default(false)
+  createdAt DateTime             @default(now())
+
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, category, createdAt])
+}
+
+model Appeal {
+  id           String           @id @default(cuid())
+  userId       String
+  targetType   AppealTargetType @default(ACCOUNT)
+  targetId     String?
+  message      String           @db.Text
+  evidenceUrls String           @db.Text
+  status       AppealStatus     @default(PENDING)
+  reviewerNote String?          @db.Text
+  reviewedById String?
+  createdAt    DateTime         @default(now())
+  reviewedAt   DateTime?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([status, createdAt])
+}
+
+model DirectMessage {
+  id           String   @id @default(cuid())
+  senderId     String
+  receiverId   String
+  content      String?  @db.Text
+  imageUrl     String?
+  sharedPostId String?
+  isRead       Boolean  @default(false)
+  createdAt    DateTime @default(now())
+
+  sender     User  @relation("dmSender", fields: [senderId], references: [id], onDelete: Cascade)
+  receiver   User  @relation("dmReceiver", fields: [receiverId], references: [id], onDelete: Cascade)
+  sharedPost Post? @relation(fields: [sharedPostId], references: [id], onDelete: SetNull)
+
+  @@index([senderId, receiverId, createdAt])
+  @@index([receiverId, isRead])
+}
+
+model SearchHistory {
+  id        String   @id @default(cuid())
+  userId    String
+  query     String
+  createdAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+model SearchTrend {
+  id        String   @id @default(cuid())
+  term      String   @unique
+  count     Int      @default(1)
+  updatedAt DateTime @updatedAt
+}

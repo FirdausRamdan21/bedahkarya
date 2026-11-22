@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" fill="none">
+  <defs>
+    <linearGradient id="bgSenja" x1="0" y1="0" x2="800" y2="1000" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#2B1B17" />
+      <stop offset="50%" stop-color="#8C3B2B" />
+      <stop offset="100%" stop-color="#F4A261" />
+    </linearGradient>
+    <radialGradient id="sunGlow" cx="50%" cy="38%" r="38%">
+      <stop offset="0%" stop-color="#FFE5B4" stop-opacity="0.95" />
+      <stop offset="60%" stop-color="#E76F51" stop-opacity="0.45" />
+      <stop offset="100%" stop-color="#E76F51" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+  <rect width="800" height="1000" fill="url(#bgSenja)" />
+  <circle cx="400" cy="390" r="260" fill="url(#sunGlow)" />
+  <circle cx="400" cy="390" r="145" fill="#FDE68A" opacity="0.92" />
+  <path d="M0 640 Q220 560 410 630 T800 600 L800 1000 L0 1000 Z" fill="#1F1310" opacity="0.7" />
+  <path d="M0 730 Q280 680 520 750 T800 710 L800 1000 L0 1000 Z" fill="#140C0A" />
+  <rect x="290" y="510" width="220" height="190" rx="28" fill="#FAF3E0" />
+  <path d="M510 550 H552 C580 550 588 640 552 640 H510" stroke="#FAF3E0" stroke-width="22" stroke-linecap="round" />
+  <ellipse cx="400" cy="510" rx="110" ry="18" fill="#4A2511" />
+  <path d="M350 470 C338 430 370 405 358 365" stroke="#FFFBEB" stroke-width="10" stroke-linecap="round" opacity="0.7" />
+  <path d="M405 460 C393 415 428 388 415 342" stroke="#FFFBEB" stroke-width="10" stroke-linecap="round" opacity="0.85" />
+  <path d="M458 475 C446 435 476 410 464 372" stroke="#FFFBEB" stroke-width="10" stroke-linecap="round" opacity="0.65" />
+  <text x="400" y="135" text-anchor="middle" fill="#FFFBEB" font-family="Georgia, serif" font-size="58" font-weight="bold" letter-spacing="8">KOPI SENJA</text>
+  <text x="400" y="182" text-anchor="middle" fill="#FDE68A" font-family="sans-serif" font-size="22" letter-spacing="6">EDISI ARSIP NUSANTARA</text>
+  <text x="400" y="885" text-anchor="middle" fill="#FDE68A" font-family="monospace" font-size="22" letter-spacing="4">POSTER ILLUSTRATION · 2026</text>
+</svg>

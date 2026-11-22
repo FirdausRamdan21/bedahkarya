@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" fill="none">
+  <rect width="800" height="1000" fill="#F1F5F9" />
+  <rect x="56" y="96" width="688" height="808" rx="20" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="3" />
+  <rect x="56" y="96" width="688" height="58" rx="20" fill="#0F172A" />
+  <rect x="56" y="130" width="688" height="24" fill="#0F172A" />
+  <circle cx="96" cy="125" r="8" fill="#EF4444" />
+  <circle cx="122" cy="125" r="8" fill="#F59E0B" />
+  <circle cx="148" cy="125" r="8" fill="#10B981" />
+  <rect x="188" y="113" width="320" height="24" rx="6" fill="#1E293B" />
+  <rect x="56" y="154" width="176" height="750" fill="#F8FAFC" />
+  <line x1="232" y1="154" x2="232" y2="904" stroke="#E2E8F0" stroke-width="2" />
+  <rect x="82" y="188" width="124" height="32" rx="8" fill="#0F172A" />
+  <rect x="82" y="236" width="124" height="24" rx="6" fill="#E2E8F0" />
+  <rect x="82" y="274" width="104" height="24" rx="6" fill="#E2E8F0" />
+  <rect x="82" y="312" width="116" height="24" rx="6" fill="#E2E8F0" />
+  <text x="266" y="212" fill="#0F172A" font-family="sans-serif" font-size="26" font-weight="bold">Katalog Perpustakaan Sekolah</text>
+  <rect x="266" y="238" width="440" height="44" rx="10" fill="#F8FAFC" stroke="#CBD5E1" stroke-width="2" />
+  <text x="288" y="266" fill="#94A3B8" font-family="sans-serif" font-size="16">Cari judul buku, pengarang, atau nomor rak...</text>
+  <rect x="266" y="310" width="208" height="250" rx="14" fill="#EFF6FF" stroke="#BFDBFE" stroke-width="2" />
+  <rect x="286" y="330" width="168" height="140" rx="10" fill="#1D4ED8" />
+  <text x="286" y="502" fill="#0F172A" font-family="sans-serif" font-size="16" font-weight="bold">Dasar Desain Grafis</text>
+  <text x="286" y="528" fill="#475569" font-family="sans-serif" font-size="13">Rak A-04 · Tersedia</text>
+  <rect x="498" y="310" width="208" height="250" rx="14" fill="#ECFDF5" stroke="#A7F3D0" stroke-width="2" />
+  <rect x="518" y="330" width="168" height="140" rx="10" fill="#047857" />
+  <text x="518" y="502" fill="#0F172A" font-family="sans-serif" font-size="16" font-weight="bold">Algoritma Web Modern</text>
+  <text x="518" y="528" fill="#475569" font-family="sans-serif" font-size="13">Rak B-12 · Tersedia</text>
+  <rect x="266" y="586" width="440" height="280" rx="14" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="2" />
+  <text x="290" y="624" fill="#0F172A" font-family="sans-serif" font-size="18" font-weight="bold">Daftar Peminjaman Aktif</text>
+  <rect x="290" y="648" width="392" height="44" rx="8" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5" />
+  <rect x="290" y="706" width="392" height="44" rx="8" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5" />
+  <rect x="290" y="764" width="392" height="44" rx="8" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5" />
+</svg>
