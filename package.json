@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "postinstall": "prisma generate",
     "predev": "node -e \"const fs=require('fs'); if(fs.existsSync('.next/BUILD_ID')) fs.rmSync('.next',{recursive:true,force:true});\"",
     "dev": "next dev",
     "prebuild": "node -e \"require('fs').rmSync(process.env.NEXT_DIST_DIR||'.next',{recursive:true,force:true});\"",

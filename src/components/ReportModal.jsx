@@ -158,22 +158,22 @@ export default function ReportModal({ isOpen, onClose, post }) {
       aria-modal="true"
       aria-label={`Laporkan konten ${post.title}`}
       onClick={onClose}
-      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-neutral-950/70 p-4 backdrop-blur-xs"
+      className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-[#1E293B]/75 p-4 backdrop-blur-xs"
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="my-auto w-full max-w-md rounded-xl border border-neutral-200 bg-white p-5 shadow-xl sm:p-6"
+        className="my-auto w-full max-w-md rounded-xl border border-slate-200 bg-white p-5 shadow-xl sm:p-6"
       >
-        <div className="flex items-start justify-between gap-3 border-b border-neutral-100 pb-3.5">
+        <div className="flex items-start justify-between gap-3 border-b border-slate-100 pb-3.5">
           <div className="flex items-center gap-2.5">
             <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-red-50 text-red-600">
               <Flag className="h-4 w-4" />
             </span>
             <div>
-              <h3 className="text-sm font-bold text-neutral-950">
+              <h3 className="text-sm font-bold text-[#1E293B]">
                 Laporkan Konten
               </h3>
-              <p className="line-clamp-1 text-xs text-neutral-500">
+              <p className="line-clamp-1 text-xs text-slate-500">
                 {post.title}
               </p>
             </div>
@@ -183,7 +183,7 @@ export default function ReportModal({ isOpen, onClose, post }) {
             type="button"
             onClick={onClose}
             aria-label="Tutup dialog laporan"
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-neutral-400 hover:bg-neutral-100 hover:text-neutral-700"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 hover:text-[#1E293B]"
           >
             <X className="h-4 w-4" />
           </button>
@@ -191,15 +191,15 @@ export default function ReportModal({ isOpen, onClose, post }) {
 
         {successMessage ? (
           <div className="mt-5 space-y-4">
-            <div className="flex items-start gap-2.5 rounded-lg border border-blue-200 bg-blue-50 px-3.5 py-3 text-sm text-blue-800">
-              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-blue-600" />
+            <div className="flex items-start gap-2.5 rounded-lg border border-[#2563EB]/30 bg-[#2563EB]/10 px-3.5 py-3 text-sm text-[#1E293B]">
+              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[#2563EB]" />
               <span>{successMessage}</span>
             </div>
             <div className="flex justify-end">
               <button
                 type="button"
                 onClick={onClose}
-                className="rounded-lg bg-neutral-950 px-4 py-2 text-sm font-medium text-white hover:bg-neutral-800"
+                className="rounded-lg bg-[#2563EB] px-4 py-2 text-sm font-medium text-white hover:bg-[#1D4ED8]"
               >
                 Tutup
               </button>
@@ -208,7 +208,7 @@ export default function ReportModal({ isOpen, onClose, post }) {
         ) : (
           <form onSubmit={handleSubmit} className="mt-4 space-y-4">
             <div>
-              <p className="mb-2 text-xs font-semibold text-neutral-700">
+              <p className="mb-2 text-xs font-semibold text-slate-700">
                 Pilih alasan laporan
               </p>
               <div className="flex flex-wrap gap-1.5">
@@ -219,11 +219,10 @@ export default function ReportModal({ isOpen, onClose, post }) {
                       key={preset}
                       type="button"
                       onClick={() => handlePresetSelect(preset)}
-                      className={`rounded-lg border px-2.5 py-1.5 text-xs font-medium transition ${
-                        active
-                          ? "border-neutral-950 bg-neutral-950 text-white"
-                          : "border-neutral-200 bg-neutral-50 text-neutral-700 hover:bg-neutral-100"
-                      }`}
+                      className={`rounded-lg border px-2.5 py-1.5 text-xs font-medium transition ${active
+                        ? "border-[#2563EB] bg-[#2563EB] text-white"
+                        : "border-slate-200 bg-[#F8FAFC] text-slate-700 hover:border-[#3B82F6]"
+                        }`}
                     >
                       {preset}
                     </button>
@@ -235,7 +234,7 @@ export default function ReportModal({ isOpen, onClose, post }) {
             <div>
               <label
                 htmlFor={`report-reason-${post.id}`}
-                className="mb-1.5 block text-xs font-semibold text-neutral-700"
+                className="mb-1.5 block text-xs font-semibold text-slate-700"
               >
                 Detail Alasan
               </label>
@@ -247,16 +246,16 @@ export default function ReportModal({ isOpen, onClose, post }) {
                 value={reason}
                 onChange={(e) => setReason(e.target.value)}
                 placeholder="Jelaskan pelanggaran yang ditemukan pada konten ini..."
-                className="w-full rounded-lg border border-neutral-300 bg-neutral-50/60 px-3 py-2 text-sm text-neutral-900 outline-none transition focus:border-neutral-900 focus:bg-white"
+                className="w-full rounded-lg border border-slate-300 bg-[#F8FAFC] px-3 py-2 text-sm text-[#1E293B] outline-none transition focus:border-[#2563EB] focus:bg-white"
               />
             </div>
 
             <div>
               <div className="mb-1.5 flex items-center justify-between">
-                <label className="text-xs font-semibold text-neutral-700">
+                <label className="text-xs font-semibold text-slate-700">
                   Lampiran Tangkapan Layar (Opsional)
                 </label>
-                <span className="text-[11px] text-neutral-400">Maks. 3 MB</span>
+                <span className="text-[11px] text-slate-400">Maks. 3 MB</span>
               </div>
 
               <input
@@ -268,15 +267,15 @@ export default function ReportModal({ isOpen, onClose, post }) {
               />
 
               {evidencePreview ? (
-                <div className="rounded-lg border border-neutral-200 bg-neutral-50 p-2.5">
+                <div className="rounded-lg border border-slate-200 bg-[#F8FAFC] p-2.5">
                   <div className="flex items-center gap-3">
                     <img
                       src={evidencePreview}
                       alt="Pratinjau bukti laporan"
-                      className="h-14 w-14 shrink-0 rounded-md border border-neutral-200 object-cover"
+                      className="h-14 w-14 shrink-0 rounded-md border border-slate-200 object-cover"
                     />
                     <div className="min-w-0 flex-1">
-                      <p className="truncate font-mono text-xs text-neutral-800">
+                      <p className="truncate font-mono text-xs text-[#1E293B]">
                         {evidenceFile?.name}
                       </p>
                       <button
@@ -294,31 +293,31 @@ export default function ReportModal({ isOpen, onClose, post }) {
                 <button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
-                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-neutral-300 bg-neutral-50 px-3 py-3 text-xs font-medium text-neutral-700 transition hover:border-neutral-400 hover:bg-neutral-100"
+                  className="flex w-full items-center justify-center gap-2 rounded-lg border border-dashed border-[#2563EB]/40 bg-[#F8FAFC] px-3 py-3 text-xs font-semibold text-[#2563EB] transition hover:bg-[#2563EB]/5"
                 >
-                  <ImagePlus className="h-4 w-4 text-neutral-500" />
+                  <ImagePlus className="h-4 w-4" />
                   Unggah screenshot / bukti pelanggaran
                 </button>
               )}
 
-              <p className="mt-1.5 text-[11px] leading-relaxed text-neutral-500">
+              <p className="mt-1.5 text-[11px] leading-relaxed text-slate-500">
                 Melampirkan tangkapan layar atau bukti pendukung akan membantu
                 mempercepat proses verifikasi dan pengawasan oleh tim moderasi.
               </p>
             </div>
 
             {error && (
-              <div className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-xs text-red-700">
+              <div className="flex items-start gap-2 rounded-lg border border-red-200 bg-red-50 px-3 py-2.5 text-xs text-red-600">
                 <AlertCircle className="mt-0.5 h-4 w-4 shrink-0" />
                 <span>{error}</span>
               </div>
             )}
 
-            <div className="flex items-center justify-end gap-2 border-t border-neutral-100 pt-3">
+            <div className="flex items-center justify-end gap-2 border-t border-slate-100 pt-3">
               <button
                 type="button"
                 onClick={onClose}
-                className="rounded-lg border border-neutral-300 bg-white px-3.5 py-2 text-xs font-medium text-neutral-700 hover:bg-neutral-50"
+                className="rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-xs font-medium text-slate-700 hover:bg-[#F8FAFC]"
               >
                 Batal
               </button>

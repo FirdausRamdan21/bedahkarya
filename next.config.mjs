@@ -4,6 +4,9 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  outputFileTracingIncludes: {
+    "/**": ["./src/generated/prisma-v3/**/*"],
+  },
   experimental: {
     optimizePackageImports: ["lucide-react"],
   },

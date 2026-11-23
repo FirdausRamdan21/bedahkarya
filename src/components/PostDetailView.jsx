@@ -174,11 +174,10 @@ export default function PostDetailView({
                 type="button"
                 onClick={handleFollowToggle}
                 disabled={followLoading || currentUser?.isSuspended}
-                className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition disabled:opacity-60 ${
-                  isFollowing
-                    ? "border border-[#2563EB]/30 bg-[#2563EB]/10 text-[#2563EB] hover:bg-[#2563EB]/15 dark:text-blue-300"
-                    : "bg-[#2563EB] text-white hover:bg-[#1D4ED8]"
-                }`}
+                className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-semibold transition disabled:opacity-60 ${isFollowing
+                  ? "border border-[#2563EB]/30 bg-[#2563EB]/10 text-[#2563EB] hover:bg-[#2563EB]/15 dark:text-blue-300"
+                  : "bg-[#2563EB] text-white hover:bg-[#1D4ED8]"
+                  }`}
               >
                 {isFollowing ? (
                   <>
@@ -332,13 +331,12 @@ export default function PostDetailView({
                   className="group overflow-hidden rounded-xl border border-[#CBD5E1] bg-white transition hover:border-[#2563EB] dark:border-slate-700 dark:bg-[#1E293B]"
                 >
                   <div
-                    className={`bk-protected-media aspect-square overflow-hidden ${
-                      itemLandscape
-                        ? "flex items-center justify-center bg-[#1E293B] p-1"
-                        : itemText
-                          ? "flex flex-col justify-between bg-[#CBD5E1] p-3 text-[#1E293B] dark:bg-slate-700 dark:text-slate-100"
-                          : "bg-[#1E293B]"
-                    }`}
+                    className={`bk-protected-media aspect-square overflow-hidden ${itemLandscape
+                      ? "flex items-center justify-center bg-[#1E293B] p-1"
+                      : itemText
+                        ? "flex flex-col justify-between bg-[#CBD5E1] p-3 text-[#1E293B] dark:bg-slate-700 dark:text-slate-100"
+                        : "bg-[#1E293B]"
+                      }`}
                   >
                     {itemText ? (
                       <>
@@ -352,11 +350,10 @@ export default function PostDetailView({
                         src={item.imageUrl}
                         alt={item.title}
                         draggable={false}
-                        className={`transition duration-300 group-hover:scale-[1.03] ${
-                          itemLandscape
-                            ? "max-h-full w-full object-contain"
-                            : "h-full w-full object-cover"
-                        }`}
+                        className={`transition duration-300 group-hover:scale-[1.03] ${itemLandscape
+                          ? "max-h-full w-full object-contain"
+                          : "h-full w-full object-cover"
+                          }`}
                       />
                     )}
                   </div>

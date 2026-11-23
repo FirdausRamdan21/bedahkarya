@@ -32,7 +32,7 @@ export default async function ProfilePage({ params, searchParams }) {
         role: true,
         createdAt: true,
         userBadges: {
-          orderBy: { createdAt: "desc" },
+          orderBy: { assignedAt: "desc" },
           select: {
             badge: {
               select: {
@@ -82,10 +82,10 @@ export default async function ProfilePage({ params, searchParams }) {
       }),
       isOwnProfile
         ? prisma.post.findMany({
-            where: { authorId: profile.id, status: "DRAFT" },
-            include: POST_INCLUDE,
-            orderBy: { createdAt: "desc" },
-          })
+          where: { authorId: profile.id, status: "DRAFT" },
+          include: POST_INCLUDE,
+          orderBy: { createdAt: "desc" },
+        })
         : Promise.resolve([]),
       prisma.comment.count({
         where: { userId: profile.id, isHelpful: true },
@@ -108,21 +108,21 @@ export default async function ProfilePage({ params, searchParams }) {
     const [likeRows, viewerBookmarks, viewerFollows] = await Promise.all([
       allPostIds.length > 0
         ? prisma.like.findMany({
-            where: {
-              userId: currentUser.id,
-              postId: { in: allPostIds },
-            },
-            select: { postId: true },
-          })
+          where: {
+            userId: currentUser.id,
+            postId: { in: allPostIds },
+          },
+          select: { postId: true },
+        })
         : Promise.resolve([]),
       allPostIds.length > 0
         ? prisma.bookmark.findMany({
-            where: {
-              userId: currentUser.id,
-              postId: { in: allPostIds },
-            },
-            select: { postId: true },
-          })
+          where: {
+            userId: currentUser.id,
+            postId: { in: allPostIds },
+          },
+          select: { postId: true },
+        })
         : Promise.resolve([]),
       prisma.follow.findMany({
         where: {

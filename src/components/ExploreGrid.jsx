@@ -167,7 +167,14 @@ export default function ExploreGrid({
           ? { externalLink: patch.externalLink }
           : {}),
         ...(patch.mentions !== undefined ? { mentions: patch.mentions } : {}),
+        ...(patch.toolsUsed !== undefined ? { toolsUsed: patch.toolsUsed } : {}),
+        ...(patch.hideLikeCount !== undefined
+          ? { hideLikeCount: patch.hideLikeCount }
+          : {}),
         ...(patch.imageUrl !== undefined ? { imageUrl: patch.imageUrl } : {}),
+        ...(patch.beforeImageUrl !== undefined
+          ? { beforeImageUrl: patch.beforeImageUrl }
+          : {}),
         likedByMe: patch.likedByMe ?? post.likedByMe,
         bookmarkedByMe: patch.bookmarkedByMe ?? post.bookmarkedByMe,
         _count: {
@@ -243,11 +250,10 @@ export default function ExploreGrid({
             <button
               type="button"
               onClick={() => handleCategorySelect("")}
-              className={`shrink-0 rounded-lg px-3.5 py-2 text-xs font-semibold transition ${
-                selectedCategory === ""
-                  ? "bg-[#2563EB] text-white"
-                  : "border border-[#CBD5E1] bg-[#F8FAFC] hover:border-[#2563EB] dark:border-slate-600 dark:bg-slate-800"
-              }`}
+              className={`shrink-0 rounded-lg px-3.5 py-2 text-xs font-semibold transition ${selectedCategory === ""
+                ? "bg-[#2563EB] text-white"
+                : "border border-[#CBD5E1] bg-[#F8FAFC] hover:border-[#2563EB] dark:border-slate-600 dark:bg-slate-800"
+                }`}
             >
               Semua Kategori
             </button>
@@ -259,11 +265,10 @@ export default function ExploreGrid({
                   key={item.key}
                   type="button"
                   onClick={() => handleCategorySelect(item.key)}
-                  className={`shrink-0 rounded-lg px-3.5 py-2 text-xs font-semibold transition ${
-                    active
-                      ? "bg-[#2563EB] text-white"
-                      : "border border-[#CBD5E1] bg-[#F8FAFC] hover:border-[#2563EB] dark:border-slate-600 dark:bg-slate-800"
-                  }`}
+                  className={`shrink-0 rounded-lg px-3.5 py-2 text-xs font-semibold transition ${active
+                    ? "bg-[#2563EB] text-white"
+                    : "border border-[#CBD5E1] bg-[#F8FAFC] hover:border-[#2563EB] dark:border-slate-600 dark:bg-slate-800"
+                    }`}
                 >
                   {item.label}
                 </button>
@@ -279,11 +284,10 @@ export default function ExploreGrid({
               <button
                 type="button"
                 onClick={() => handleSubcategorySelect("")}
-                className={`shrink-0 rounded-md px-2.5 py-1 text-[11px] font-semibold transition ${
-                  selectedSubcategory === ""
-                    ? "bg-[#1E293B] text-white dark:bg-[#2563EB]"
-                    : "bg-[#F8FAFC] text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300"
-                }`}
+                className={`shrink-0 rounded-md px-2.5 py-1 text-[11px] font-semibold transition ${selectedSubcategory === ""
+                  ? "bg-[#1E293B] text-white dark:bg-[#2563EB]"
+                  : "bg-[#F8FAFC] text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300"
+                  }`}
               >
                 Semua
               </button>
@@ -294,11 +298,10 @@ export default function ExploreGrid({
                     key={sub.slug}
                     type="button"
                     onClick={() => handleSubcategorySelect(sub.slug)}
-                    className={`shrink-0 rounded-md px-2.5 py-1 text-[11px] font-semibold transition ${
-                      active
-                        ? "bg-[#1E293B] text-white dark:bg-[#2563EB]"
-                        : "bg-[#F8FAFC] text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300"
-                    }`}
+                    className={`shrink-0 rounded-md px-2.5 py-1 text-[11px] font-semibold transition ${active
+                      ? "bg-[#1E293B] text-white dark:bg-[#2563EB]"
+                      : "bg-[#F8FAFC] text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300"
+                      }`}
                   >
                     {sub.name}
                   </button>

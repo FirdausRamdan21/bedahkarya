@@ -17,9 +17,9 @@ import {
 import { formatRelativeTime } from "@/lib/format";
 
 const STATUS_STYLES = {
-  PENDING: "border-slate-200 bg-slate-50 text-slate-800",
-  RESOLVED: "border-blue-200 bg-blue-50 text-blue-800",
-  DISMISSED: "border-neutral-200 bg-neutral-100 text-neutral-700",
+  PENDING: "border-red-200 bg-red-50 text-red-600",
+  RESOLVED: "border-[#2563EB]/30 bg-[#2563EB]/10 text-[#2563EB]",
+  DISMISSED: "border-slate-200 bg-[#F8FAFC] text-slate-600",
 };
 
 const STATUS_LABELS = {
@@ -72,14 +72,12 @@ export default function AdminReportsManager({ initialReports, initialCounts }) {
       const response = await fetch(`/api/admin?${params.toString()}`);
       const data = await response.json().catch(() => null);
       if (!response.ok || !data) {
-        setError(data?.error || "Gagal memuat daftar laporan.");
+        setError(data?.error || "Gagal memuat data laporan.");
         return;
       }
 
       setReports(data.reports || []);
-      if (data.counts) {
-        setCounts(data.counts);
-      }
+      if (data.counts) setCounts(data.counts);
     } catch {
       setError("Gagal terhubung ke server.");
     } finally {
@@ -87,7 +85,7 @@ export default function AdminReportsManager({ initialReports, initialCounts }) {
     }
   }
 
-  async function handleUpdateStatus(reportId, status) {
+  async function handleStatusUpdate(reportId, nextStatus) {
     setBusyId(reportId);
     setError("");
     try {
@@ -97,7 +95,7 @@ export default function AdminReportsManager({ initialReports, initialCounts }) {
         body: JSON.stringify({
           action: "UPDATE_REPORT_STATUS",
           reportId,
-          status,
+          status: nextStatus,
         }),
       });
       const data = await response.json().catch(() => ({}));
@@ -115,7 +113,7 @@ export default function AdminReportsManager({ initialReports, initialCounts }) {
     }
   }
 
-  async function handleConfirmDeletePost() {
+  async function handleResolveAndDeletePost() {
     if (!confirmDeleteReport) return;
     setDeletingPost(true);
     setError("");
@@ -130,7 +128,7 @@ export default function AdminReportsManager({ initialReports, initialCounts }) {
       });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) {
-        setError(data.error || "Gagal menghapus konten melanggar.");
+        setError(data.error || "Gagal menghapus konten terlapor.");
         return;
       }
 
@@ -144,53 +142,41 @@ export default function AdminReportsManager({ initialReports, initialCounts }) {
     }
   }
 
-  const tabs = [
-    { value: "", label: "Semua", count: counts.total },
-    { value: "PENDING", label: "Menunggu", count: counts.pending },
-    { value: "RESOLVED", label: "Selesai", count: counts.resolved },
-    { value: "DISMISSED", label: "Diabaikan", count: counts.dismissed },
-  ];
-
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight text-neutral-950">
-          Pusat Laporan
+        <h1 className="text-2xl font-bold tracking-tight text-[#1E293B]">
+          Pusat Laporan Komunitas
         </h1>
-        <p className="mt-1 text-sm text-neutral-600">
-          Tinjau laporan dan tangkapan layar bukti dari pengguna publik.
+        <p className="mt-1 text-sm text-slate-600">
+          Tinjau tiket laporan beserta tangkapan layar bukti untuk menjaga
+          kualitas ruang diskusi.
         </p>
       </div>
 
-      <section className="flex flex-col gap-3 rounded-xl border border-neutral-200 bg-white p-4 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex flex-wrap items-center gap-1.5">
-          {tabs.map((tab) => {
-            const active = statusFilter === tab.value;
-            return (
-              <button
-                key={tab.label}
-                type="button"
-                onClick={() => {
-                  setStatusFilter(tab.value);
-                  fetchReports({ nextStatus: tab.value });
-                }}
-                className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs font-medium transition ${
-                  active
-                    ? "bg-neutral-950 text-white"
-                    : "bg-neutral-100 text-neutral-700 hover:bg-neutral-200"
+      <section className="space-y-3 rounded-xl border border-slate-200 bg-white p-4">
+        <div className="flex flex-wrap items-center gap-2">
+          {[
+            { value: "", label: `Semua (${counts.total})` },
+            { value: "PENDING", label: `Menunggu (${counts.pending})` },
+            { value: "RESOLVED", label: `Selesai (${counts.resolved})` },
+            { value: "DISMISSED", label: `Diabaikan (${counts.dismissed})` },
+          ].map((tab) => (
+            <button
+              key={tab.label}
+              type="button"
+              onClick={() => {
+                setStatusFilter(tab.value);
+                fetchReports({ nextStatus: tab.value });
+              }}
+              className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${statusFilter === tab.value
+                ? "bg-[#2563EB] text-white"
+                : "bg-[#F8FAFC] text-slate-600 hover:text-[#2563EB]"
                 }`}
-              >
-                <span>{tab.label}</span>
-                <span
-                  className={`rounded px-1.5 py-0.2 font-mono text-[10px] ${
-                    active ? "bg-white/20 text-white" : "bg-white text-neutral-700"
-                  }`}
-                >
-                  {tab.count}
-                </span>
-              </button>
-            );
-          })}
+            >
+              {tab.label}
+            </button>
+          ))}
         </div>
 
         <form
@@ -198,21 +184,21 @@ export default function AdminReportsManager({ initialReports, initialCounts }) {
             e.preventDefault();
             fetchReports();
           }}
-          className="flex items-center gap-2 lg:w-80"
+          className="flex items-center gap-2 border-t border-slate-100 pt-3"
         >
           <div className="relative flex-1">
-            <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-neutral-400" />
+            <Search className="pointer-events-none absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-slate-400" />
             <input
               type="search"
               value={queryInput}
               onChange={(e) => setQueryInput(e.target.value)}
-              placeholder="Cari alasan atau judul konten..."
-              className="w-full rounded-lg border border-neutral-300 bg-neutral-50 py-1.5 pr-3 pl-9 text-sm text-neutral-900 outline-none focus:border-neutral-900 focus:bg-white"
+              placeholder="Cari alasan laporan, judul konten, pelapor, atau pembuat..."
+              className="w-full rounded-lg border border-slate-300 bg-[#F8FAFC] py-2 pr-3 pl-9 text-sm text-[#1E293B] outline-none focus:border-[#2563EB] focus:bg-white"
             />
           </div>
           <button
             type="submit"
-            className="rounded-lg bg-neutral-950 px-3.5 py-1.5 text-xs font-semibold text-white hover:bg-neutral-800"
+            className="rounded-lg bg-[#2563EB] px-4 py-2 text-sm font-semibold text-white hover:bg-[#1D4ED8]"
           >
             Cari
           </button>
@@ -220,153 +206,148 @@ export default function AdminReportsManager({ initialReports, initialCounts }) {
       </section>
 
       {error && (
-        <div className="flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="flex items-center gap-2 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
           <AlertCircle className="h-4 w-4 shrink-0" />
           <span>{error}</span>
         </div>
       )}
 
       {loading ? (
-        <div className="flex items-center justify-center rounded-xl border border-neutral-200 bg-white py-14 text-sm text-neutral-500">
-          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          Memuat antrean laporan...
+        <div className="flex items-center justify-center rounded-xl border border-slate-200 bg-white py-14 text-sm text-slate-500">
+          <Loader2 className="mr-2 h-4 w-4 animate-spin text-[#2563EB]" />
+          Memuat laporan...
         </div>
       ) : reports.length === 0 ? (
-        <div className="rounded-xl border border-neutral-200 bg-white px-6 py-14 text-center text-sm text-neutral-500">
-          Tidak ada tiket laporan pada kategori ini.
+        <div className="rounded-xl border border-slate-200 bg-white px-6 py-14 text-center text-sm text-slate-500">
+          Tidak ada tiket laporan pada status ini.
         </div>
       ) : (
         <div className="space-y-3">
           {reports.map((report) => {
             const busy = busyId === report.id;
             return (
-              <article
+              <div
                 key={report.id}
-                className="flex flex-col justify-between gap-4 rounded-xl border border-neutral-200 bg-white p-4 sm:flex-row sm:items-center"
+                className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5"
               >
-                <div className="flex items-start gap-3.5">
-                  {report.post?.imageUrl ? (
-                    <img
-                      src={report.post.imageUrl}
-                      alt={report.post.title}
-                      className="h-16 w-16 shrink-0 rounded-lg border border-neutral-200 object-cover"
-                    />
-                  ) : (
-                    <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-lg border border-neutral-200 bg-neutral-100 text-neutral-500">
-                      <FileText className="h-5 w-5" />
-                    </div>
-                  )}
-                  <div className="space-y-1">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span
-                        className={`rounded-md border px-2 py-0.5 font-mono text-[11px] font-semibold ${
-                          STATUS_STYLES[report.status] || STATUS_STYLES.PENDING
-                        }`}
-                      >
-                        {STATUS_LABELS[report.status] || report.status}
-                      </span>
-                      <span className="text-xs text-neutral-500">
-                        {formatRelativeTime(report.createdAt)}
-                      </span>
-                    </div>
+                <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                  <div className="flex items-start gap-3.5">
+                    {report.post.imageUrl ? (
+                      <div className="bk-protected-media h-16 w-16 shrink-0 overflow-hidden rounded-lg border border-slate-200 bg-[#1E293B]">
+                        <img
+                          src={report.post.imageUrl}
+                          alt={report.post.title}
+                          className={`h-full w-full ${report.post.imageFormat === "LANDSCAPE"
+                            ? "object-contain"
+                            : "object-cover"
+                            }`}
+                        />
+                      </div>
+                    ) : (
+                      <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-lg border border-slate-200 bg-[#CBD5E1] text-[#1E293B]">
+                        <FileText className="h-5 w-5" />
+                      </div>
+                    )}
 
-                    <h3 className="text-sm font-bold text-neutral-950">
-                      {report.post?.title || "Konten tidak tersedia"}
-                    </h3>
-
-                    <p className="text-xs text-neutral-500">
-                      Kreator:{" "}
-                      {report.post?.author ? (
-                        <Link
-                          href={`/profile/${report.post.author.username}`}
-                          className="font-mono text-neutral-700 hover:underline"
+                    <div className="min-w-0 space-y-1.5">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <span
+                          className={`rounded-md border px-2 py-0.5 text-[11px] font-semibold ${STATUS_STYLES[report.status] || STATUS_STYLES.PENDING
+                            }`}
                         >
-                          @{report.post.author.username}
-                        </Link>
-                      ) : (
-                        "-"
-                      )}{" "}
-                      · Pelapor:{" "}
-                      <Link
-                        href={`/profile/${report.reporter.username}`}
-                        className="font-mono text-neutral-700 hover:underline"
-                      >
-                        @{report.reporter.username}
-                      </Link>
-                    </p>
+                          {STATUS_LABELS[report.status] || report.status}
+                        </span>
+                        <span className="text-xs text-slate-500">
+                          Dilaporkan {formatRelativeTime(report.createdAt)} oleh{" "}
+                          <Link
+                            href={`/profile/${report.reporter.username}`}
+                            className="font-mono font-semibold text-[#2563EB] hover:underline"
+                          >
+                            @{report.reporter.username}
+                          </Link>
+                        </span>
+                      </div>
 
-                    <p className="mt-1 rounded-lg bg-neutral-50 px-3 py-2 text-xs leading-relaxed text-neutral-700">
-                      {report.reason}
-                    </p>
+                      <h3 className="text-sm font-bold text-[#1E293B]">
+                        <Link
+                          href={`/post/${report.post.id}`}
+                          className="hover:text-[#2563EB] hover:underline"
+                        >
+                          {report.post.title}
+                        </Link>{" "}
+                        <span className="font-mono text-xs font-normal text-slate-500">
+                          oleh @{report.post.author.username}
+                        </span>
+                      </h3>
 
-                    {report.evidenceUrl && (
-                      <div className="pt-1">
+                      <p className="rounded-lg border border-slate-100 bg-[#F8FAFC] px-3 py-2 text-xs leading-relaxed text-[#1E293B]">
+                        {report.reason}
+                      </p>
+
+                      {report.evidenceUrl && (
                         <button
                           type="button"
                           onClick={() => setPreviewEvidenceUrl(report.evidenceUrl)}
-                          className="inline-flex items-center gap-1.5 rounded-lg border border-neutral-200 bg-white px-2.5 py-1.5 text-xs font-medium text-neutral-700 hover:bg-neutral-50"
+                          className="inline-flex items-center gap-1.5 rounded-lg border border-[#2563EB]/30 bg-[#2563EB]/10 px-2.5 py-1 text-xs font-semibold text-[#2563EB] transition hover:bg-[#2563EB]/20"
                         >
-                          <ImageIcon className="h-3.5 w-3.5 text-neutral-500" />
-                          Lihat Lampiran Tangkapan Layar
+                          <ImageIcon className="h-3.5 w-3.5" />
+                          Lihat Screenshot Bukti
                         </button>
-                      </div>
-                    )}
+                      )}
+                    </div>
                   </div>
-                </div>
 
-                <div className="flex shrink-0 flex-wrap items-center gap-2 sm:flex-col sm:items-end">
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    {report.status === "PENDING" ? (
-                      <>
-                        <button
-                          type="button"
-                          disabled={busy}
-                          onClick={() =>
-                            handleUpdateStatus(report.id, "RESOLVED")
-                          }
-                          className="inline-flex items-center gap-1 rounded-lg border border-blue-200 bg-blue-50 px-3 py-1.5 text-xs font-medium text-blue-800 hover:bg-blue-100 disabled:opacity-50"
-                        >
-                          <Check className="h-3.5 w-3.5" />
-                          Selesaikan
-                        </button>
-                        <button
-                          type="button"
-                          disabled={busy}
-                          onClick={() =>
-                            handleUpdateStatus(report.id, "DISMISSED")
-                          }
-                          className="inline-flex items-center gap-1 rounded-lg border border-neutral-200 bg-white px-3 py-1.5 text-xs font-medium text-neutral-700 hover:bg-neutral-50 disabled:opacity-50"
-                        >
-                          <X className="h-3.5 w-3.5" />
-                          Abaikan
-                        </button>
-                      </>
-                    ) : (
+                  <div className="flex flex-wrap items-center gap-1.5 lg:shrink-0">
+                    {report.status !== "RESOLVED" && (
                       <button
                         type="button"
                         disabled={busy}
-                        onClick={() => handleUpdateStatus(report.id, "PENDING")}
-                        className="inline-flex items-center gap-1 rounded-lg border border-neutral-200 bg-white px-3 py-1.5 text-xs font-medium text-neutral-700 hover:bg-neutral-50 disabled:opacity-50"
+                        onClick={() => handleStatusUpdate(report.id, "RESOLVED")}
+                        className="inline-flex items-center gap-1 rounded-lg border border-[#2563EB]/30 bg-[#2563EB]/10 px-3 py-1.5 text-xs font-semibold text-[#2563EB] hover:bg-[#2563EB]/20 disabled:opacity-50"
                       >
-                        <RotateCcw className="h-3.5 w-3.5" />
-                        Buka Kembali
+                        <Check className="h-3.5 w-3.5" />
+                        Tandai Selesai
                       </button>
                     )}
-                  </div>
 
-                  {report.post && (
+                    {report.status !== "DISMISSED" && (
+                      <button
+                        type="button"
+                        disabled={busy}
+                        onClick={() =>
+                          handleStatusUpdate(report.id, "DISMISSED")
+                        }
+                        className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-[#F8FAFC] disabled:opacity-50"
+                      >
+                        <X className="h-3.5 w-3.5" />
+                        Abaikan
+                      </button>
+                    )}
+
+                    {report.status !== "PENDING" && (
+                      <button
+                        type="button"
+                        disabled={busy}
+                        onClick={() => handleStatusUpdate(report.id, "PENDING")}
+                        className="inline-flex items-center gap-1 rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 hover:bg-[#F8FAFC] disabled:opacity-50"
+                      >
+                        <RotateCcw className="h-3.5 w-3.5" />
+                        Buka Lagi
+                      </button>
+                    )}
+
                     <button
                       type="button"
                       disabled={busy}
                       onClick={() => setConfirmDeleteReport(report)}
-                      className="inline-flex items-center gap-1 rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-700 hover:bg-red-100 disabled:opacity-50"
+                      className="inline-flex items-center gap-1 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700 disabled:opacity-50"
                     >
                       <Trash2 className="h-3.5 w-3.5" />
-                      Hapus Konten Pelanggar
+                      Hapus Konten
                     </button>
-                  )}
+                  </div>
                 </div>
-              </article>
+              </div>
             );
           })}
         </div>
@@ -377,18 +358,17 @@ export default function AdminReportsManager({ initialReports, initialCounts }) {
           role="dialog"
           aria-modal="true"
           onClick={() => setPreviewEvidenceUrl("")}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-neutral-950/80 p-4 backdrop-blur-xs"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[#1E293B]/80 p-4 backdrop-blur-xs"
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="max-h-[90vh] max-w-3xl overflow-hidden rounded-xl border border-neutral-700 bg-neutral-900 p-3 shadow-2xl"
+            className="max-w-2xl space-y-2"
           >
-            <div className="mb-2 flex items-center justify-between text-xs text-neutral-300">
-              <span>Lampiran Bukti Laporan</span>
+            <div className="flex justify-end">
               <button
                 type="button"
                 onClick={() => setPreviewEvidenceUrl("")}
-                className="rounded-lg p-1 hover:bg-neutral-800"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-white text-[#1E293B]"
               >
                 <X className="h-4 w-4" />
               </button>
@@ -396,7 +376,7 @@ export default function AdminReportsManager({ initialReports, initialCounts }) {
             <img
               src={previewEvidenceUrl}
               alt="Bukti tangkapan layar laporan"
-              className="max-h-[78vh] w-auto rounded-lg object-contain"
+              className="max-h-[80vh] w-full rounded-xl border border-slate-700 bg-[#1E293B] object-contain"
             />
           </div>
         </div>
@@ -407,41 +387,39 @@ export default function AdminReportsManager({ initialReports, initialCounts }) {
           role="dialog"
           aria-modal="true"
           onClick={() => setConfirmDeleteReport(null)}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-neutral-950/70 p-4 backdrop-blur-xs"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[#1E293B]/75 p-4 backdrop-blur-xs"
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="w-full max-w-md rounded-xl border border-neutral-200 bg-white p-6 shadow-xl"
+            className="w-full max-w-md rounded-xl border border-slate-200 bg-white p-6 shadow-xl"
           >
-            <h3 className="text-base font-bold text-neutral-950">
-              Hapus Konten yang Dilaporkan?
+            <h3 className="text-base font-bold text-[#1E293B]">
+              Hapus Konten Melanggar?
             </h3>
-            <p className="mt-2 text-sm text-neutral-600">
+            <p className="mt-2 text-sm text-slate-600">
               Konten{" "}
-              <span className="font-semibold text-neutral-950">
-                &ldquo;{confirmDeleteReport.post?.title}&rdquo;
+              <span className="font-semibold text-[#1E293B]">
+                &ldquo;{confirmDeleteReport.post.title}&rdquo;
               </span>{" "}
-              akan dihapus permanen beserta seluruh suka, komentar, dan laporan
+              akan dihapus permanen beserta seluruh komentar dan laporan
               terkait.
             </p>
             <div className="mt-5 flex justify-end gap-2">
               <button
                 type="button"
                 onClick={() => setConfirmDeleteReport(null)}
-                className="rounded-lg border border-neutral-300 bg-white px-4 py-2 text-xs font-medium text-neutral-700 hover:bg-neutral-50"
+                className="rounded-lg border border-slate-300 bg-white px-4 py-2 text-xs font-medium text-slate-700"
               >
                 Batal
               </button>
               <button
                 type="button"
-                onClick={handleConfirmDeletePost}
+                onClick={handleResolveAndDeletePost}
                 disabled={deletingPost}
                 className="inline-flex items-center gap-1.5 rounded-lg bg-red-600 px-4 py-2 text-xs font-semibold text-white hover:bg-red-700 disabled:opacity-60"
               >
-                {deletingPost && (
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                )}
-                {deletingPost ? "Menghapus..." : "Hapus Konten"}
+                {deletingPost && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                Hapus Konten
               </button>
             </div>
           </div>

@@ -76,7 +76,7 @@ export default function CommentSection({
       if (response.status === 422 && data.blocked) {
         setModerationWarning(
           data.error ||
-            "Komentar ditolak otomatis karena mengandung kata terlarang."
+          "Komentar ditolak otomatis karena mengandung kata terlarang."
         );
         return;
       }
@@ -156,9 +156,9 @@ export default function CommentSection({
   const categoryMeta = getCategoryMeta(category, categories);
   const isPostOwner = Boolean(
     currentUser &&
-      postAuthorId &&
-      currentUser.id === postAuthorId &&
-      !currentUser.isSuspended
+    postAuthorId &&
+    currentUser.id === postAuthorId &&
+    !currentUser.isSuspended
   );
 
   return (
